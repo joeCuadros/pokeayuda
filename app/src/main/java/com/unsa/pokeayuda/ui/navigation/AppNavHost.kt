@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.unsa.pokeayuda.ui.screens.pokemon.PokemonScreen
 import com.unsa.pokeayuda.ui.screens.settings.SettingsScreen
 
 @Composable
@@ -20,7 +21,11 @@ fun AppNavHost(
     ) {
 
         composable(NavRoutes.MyPokemon.route) {
-            Text("My Pokemon - no implementada")
+            PokemonScreen(
+                onNavigateToDetail = { pokemonId ->
+                    navController.navigate(NavRoutes.PokemonDetail.createRoute(pokemonId))
+                }
+            )
         }
 
         composable(NavRoutes.PokemonDetail.route) {

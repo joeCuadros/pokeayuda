@@ -3,6 +3,7 @@ package com.unsa.pokeayuda.di
 import com.unsa.pokeayuda.data.repository.AppPreferencesRepositoryImpl
 import com.unsa.pokeayuda.data.repository.AtaqueRepositoryImpl
 import com.unsa.pokeayuda.data.repository.CadenaEvolutivaRepositoryImpl
+import com.unsa.pokeayuda.data.repository.EquipoPokemonRepositoryImpl
 import com.unsa.pokeayuda.data.repository.GeneracionRepositoryImpl
 import com.unsa.pokeayuda.data.repository.HabilidadRepositoryImpl
 import com.unsa.pokeayuda.data.repository.PokemonRepositoryImpl
@@ -10,6 +11,7 @@ import com.unsa.pokeayuda.data.repository.TipoRepositoryImpl
 import com.unsa.pokeayuda.domain.repository.AppPreferencesRepository
 import com.unsa.pokeayuda.domain.repository.AtaqueRepository
 import com.unsa.pokeayuda.domain.repository.CadenaEvolutivaRepository
+import com.unsa.pokeayuda.domain.repository.EquipoPokemonRepository
 import com.unsa.pokeayuda.domain.repository.GeneracionRepository
 import com.unsa.pokeayuda.domain.repository.HabilidadRepository
 import com.unsa.pokeayuda.domain.repository.PokemonRepository
@@ -59,6 +61,12 @@ abstract class RepositoryModule {
     abstract fun bindTipoRepository(
         impl: TipoRepositoryImpl
     ): TipoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindEquipoPokemonRepository(
+        impl: EquipoPokemonRepositoryImpl
+    ): EquipoPokemonRepository
 
     @Binds
     @Singleton
