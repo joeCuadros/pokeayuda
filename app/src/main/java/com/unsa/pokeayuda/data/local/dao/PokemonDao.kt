@@ -13,8 +13,15 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon")
     suspend fun getAll(): List<PokemonEntity>
 
-    @Query("SELECT * FROM pokemon WHERE id = :id")
-    suspend fun getId(id: Int): PokemonEntity?
+    @Query("""
+    SELECT * FROM pokemon
+        WHERE idPokemon = :idPokemon
+        AND idGeneracion = :idGeneracion
+    """)
+    suspend fun getId(
+        idPokemon: Int,
+        idGeneracion: Int
+    ): PokemonEntity?
 
     @Update
     suspend fun update(entity: PokemonEntity)
@@ -22,15 +29,21 @@ interface PokemonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: PokemonEntity)
 
-    @Query("DELETE FROM pokemon WHERE id = :id")
-    suspend fun deleteId(id: Int)
+    @Query("""
+    DELETE FROM pokemon
+        WHERE idPokemon = :idPokemon
+        AND idGeneracion = :idGeneracion
+    """)
+    suspend fun deleteId(
+        idPokemon: Int,
+        idGeneracion: Int
+    )
 
     @Query("DELETE FROM pokemon")
     suspend fun deleteAll()
 
     @Query("""
         SELECT IFNULL(SUM(
-            LENGTH(CAST(id AS BLOB)) +
             LENGTH(CAST(idPokemon AS BLOB)) +
             LENGTH(CAST(idGeneracion AS BLOB)) +
             LENGTH(nombrePokemon) +

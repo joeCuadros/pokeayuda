@@ -1,12 +1,12 @@
 package com.unsa.pokeayuda.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "tipo")
+@Entity(
+    tableName = "tipo",
+    primaryKeys = ["idPokemon", "idGeneracion"]
+)
 data class TipoEntity(
-    @PrimaryKey
-    val id: Int,
     val idPokemon: Int,
     val idGeneracion: Int,
     val nombrePokemon: String,

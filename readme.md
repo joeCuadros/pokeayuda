@@ -71,3 +71,69 @@ flowchart TD
 ```
 
 Este flujo permite que la aplicación consulte primero la información almacenada localmente. Si los datos no existen, se obtienen desde la API y posteriormente se almacenan en Room. Cuando los datos ya están disponibles localmente, se verifica si el tiempo de sincronización ha expirado; en ese caso se actualiza la información desde la API. Si el cache aún es válido, los datos se obtienen directamente desde Room, evitando llamadas innecesarias a la red y garantizando el funcionamiento Offline-First.
+
+## Diagrma ERD
+```mermaid
+erDiagram
+
+    Pokemon {
+        int idPokemon PK
+        int idGeneracion PK
+        string nombrePokemon
+        string nombreGeneracion
+        long fecha
+        string data
+    }
+
+    EquipoPokemon {
+        int id PK
+        int idPokemon FK
+        int idGeneracion FK
+    }
+
+    GeneracionPokemon {
+        int id PK
+        string nombre
+        long fecha
+        string data
+    }
+
+    CadenaEvolutiva {
+        int id PK
+        long fecha
+        string data
+    }
+
+    Ataque {
+        int idPokemon PK, FK
+        int idGeneracion PK, FK
+        string nombrePokemon
+        string nombreGeneracion
+        long fecha
+        string data
+    }
+
+    Habilidad {
+        int idPokemon PK, FK
+        int idGeneracion PK, FK
+        string nombrePokemon
+        string nombreGeneracion
+        long fecha
+        string data
+    }
+
+    Tipo {
+        int idPokemon PK, FK
+        int idGeneracion PK, FK
+        string nombrePokemon
+        string nombreGeneracion
+        long fecha
+        string data
+    }
+
+    Pokemon ||--o{ EquipoPokemon : pertenece
+    Pokemon ||--|| Ataque : posee
+    Pokemon ||--|| Habilidad : posee
+    Pokemon ||--|| Tipo : posee
+```
+

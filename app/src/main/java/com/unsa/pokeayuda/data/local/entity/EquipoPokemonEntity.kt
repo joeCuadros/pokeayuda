@@ -10,17 +10,18 @@ import androidx.room.PrimaryKey
     foreignKeys = [
         ForeignKey(
             entity = PokemonEntity::class,
-            parentColumns = ["idPokemon"],
-            childColumns = ["idPokemon"],
+            parentColumns = ["idPokemon", "idGeneracion"],
+            childColumns = ["idPokemon", "idGeneracion"],
             onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [
-        Index(value = ["idPokemon"])
+        Index(value = ["idPokemon", "idGeneracion"])
     ]
 )
 data class EquipoPokemonEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val idPokemon: Int
+    val idPokemon: Int,
+    val idGeneracion: Int
 )

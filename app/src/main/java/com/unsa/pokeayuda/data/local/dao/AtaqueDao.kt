@@ -13,8 +13,15 @@ interface AtaqueDao {
     @Query("SELECT * FROM ataque")
     suspend fun getAll(): List<AtaqueEntity>
 
-    @Query("SELECT * FROM ataque WHERE id = :id")
-    suspend fun getId(id: Int): AtaqueEntity?
+    @Query("""
+    SELECT * FROM ataque
+        WHERE idPokemon = :idPokemon
+        AND idGeneracion = :idGeneracion
+    """)
+    suspend fun getId(
+        idPokemon: Int,
+        idGeneracion: Int
+    ): AtaqueEntity?
 
     @Update
     suspend fun update(entity: AtaqueEntity)
@@ -22,15 +29,21 @@ interface AtaqueDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: AtaqueEntity)
 
-    @Query("DELETE FROM ataque WHERE id = :id")
-    suspend fun deleteId(id: Int)
+    @Query("""
+    DELETE FROM ataque
+        WHERE idPokemon = :idPokemon
+        AND idGeneracion = :idGeneracion
+    """)
+    suspend fun deleteId(
+        idPokemon: Int,
+        idGeneracion: Int
+    )
 
     @Query("DELETE FROM ataque")
     suspend fun deleteAll()
 
     @Query("""
         SELECT IFNULL(SUM(
-            LENGTH(CAST(id AS BLOB)) +
             LENGTH(CAST(idPokemon AS BLOB)) +
             LENGTH(CAST(idGeneracion AS BLOB)) +
             LENGTH(nombrePokemon) +

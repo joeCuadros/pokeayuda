@@ -31,7 +31,8 @@ interface EquipoPokemonDao {
     @Query("""
         SELECT IFNULL(SUM(
             LENGTH(CAST(id AS BLOB)) +
-            LENGTH(CAST(idPokemon AS BLOB))
+            LENGTH(CAST(idPokemon AS BLOB)) +
+            LENGTH(CAST(idGeneracion AS BLOB))
         ),0)
         FROM equipo_pokemon
     """)
