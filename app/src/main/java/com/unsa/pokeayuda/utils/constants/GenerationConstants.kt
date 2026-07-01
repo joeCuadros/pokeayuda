@@ -88,4 +88,7 @@ object GenerationConstants {
     fun get(generation: String): GenerationInfo? {
         return generations[generation]
     }
+    fun getGenerationNames(): List<String> {
+        return generations.keys.toList()
+    }
 }
