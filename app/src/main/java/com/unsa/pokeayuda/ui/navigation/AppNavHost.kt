@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.unsa.pokeayuda.ui.screens.settings.SettingsScreen
 
 @Composable
 fun AppNavHost(
@@ -27,7 +28,7 @@ fun AppNavHost(
         }
 
         composable(NavRoutes.Settings.route) {
-            Text("Settings - no implementada")
+            SettingsScreen()
         }
 
         composable(NavRoutes.BattleAnalysis.route) {

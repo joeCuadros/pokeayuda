@@ -10,6 +10,7 @@ kotlin = "2.4.0"
 composeBom = "2025.10.01" # compatabilida SDK-36
 navigationCompose = "2.9.8" # version navegacion
 hilt = "2.60" # version hilt (inyeccion de depencia)
+hiltNavigationCompose = "1.2.0" # hilt
 ksp = "2.3.9" # version ksp
 room = "2.8.4" # version room
 datastore = "1.2.1" # version datastore
@@ -34,8 +35,10 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" } # iconos extendidos
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" } # navegacion
-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" } # hilt
-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" } # hilt
+# hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 # librerias room
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }

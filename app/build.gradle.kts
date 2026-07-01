@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended) //iconos extendidos
     implementation(libs.androidx.navigation.compose) // navegacion
     implementation(libs.hilt.android) // hilt
+    implementation(libs.androidx.hilt.navigation.compose) //hilt - compose
     ksp(libs.hilt.compiler) // ksp - hilt
     // room
     implementation(libs.androidx.room.runtime)
