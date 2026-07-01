@@ -25,7 +25,7 @@ class AppPreferencesImpl(
         }
     override val theme: Flow<Theme> =
         context.dataStore.data.map {
-            Theme.valueOf(it[THEME] ?: Theme.SYSTEM.name)
+            Theme.valueOf(it[THEME] ?: Theme.Default.name)
         }
     override val syncDays: Flow<Int> =
         context.dataStore.data.map {

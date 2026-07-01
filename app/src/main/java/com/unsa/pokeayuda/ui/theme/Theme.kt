@@ -1,58 +1,57 @@
 package com.unsa.pokeayuda.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import com.unsa.pokeayuda.domain.model.Theme
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+/** Elige el ColorScheme completo (todos los tokens explicitos) para un tema + modo. */
+private fun colorSchemeFor(theme: Theme, darkTheme: Boolean): ColorScheme = when (theme) {
+    Theme.OCEANO     -> if (darkTheme) OceanoDarkScheme     else OceanoLightScheme
+    Theme.BOSQUE     -> if (darkTheme) BosqueDarkScheme     else BosqueLightScheme
+    Theme.ATARDECER  -> if (darkTheme) AtardecerDarkScheme  else AtardecerLightScheme
+    Theme.LAVANDA    -> if (darkTheme) LavandaDarkScheme    else LavandaLightScheme
+    Theme.CORAL      -> if (darkTheme) CoralDarkScheme      else CoralLightScheme
+    Theme.MEDIANOCHE -> if (darkTheme) MedianocheDarkScheme else MedianocheLightScheme
+    Theme.ESMERALDA  -> if (darkTheme) EsmeraldaDarkScheme  else EsmeraldaLightScheme
+    Theme.RUBI       -> if (darkTheme) RubiDarkScheme       else RubiLightScheme
+    Theme.AMBAR      -> if (darkTheme) AmbarDarkScheme      else AmbarLightScheme
+    Theme.CIELO      -> if (darkTheme) CieloDarkScheme      else CieloLightScheme
+    Theme.ROSA       -> if (darkTheme) RosaDarkScheme       else RosaLightScheme
+    Theme.GRAFITO    -> if (darkTheme) GrafitoDarkScheme    else GrafitoLightScheme
+}
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
+/** Elige la Typography completa (15 estilos) para un tema. No cambia entre claro/oscuro. */
+private fun typographyFor(theme: Theme): Typography = when (theme) {
+    Theme.OCEANO     -> OceanoTypography
+    Theme.BOSQUE     -> BosqueTypography
+    Theme.ATARDECER  -> AtardecerTypography
+    Theme.LAVANDA    -> LavandaTypography
+    Theme.CORAL      -> CoralTypography
+    Theme.MEDIANOCHE -> MedianocheTypography
+    Theme.ESMERALDA  -> EsmeraldaTypography
+    Theme.RUBI       -> RubiTypography
+    Theme.AMBAR      -> AmbarTypography
+    Theme.CIELO      -> CieloTypography
+    Theme.ROSA       -> RosaTypography
+    Theme.GRAFITO    -> GrafitoTypography
+}
 
 @Composable
 fun PokeayudaTheme(
+    theme: Theme = Theme.Default,
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = colorSchemeFor(theme, darkTheme)
+    val typography = typographyFor(theme)
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content
     )
 }
