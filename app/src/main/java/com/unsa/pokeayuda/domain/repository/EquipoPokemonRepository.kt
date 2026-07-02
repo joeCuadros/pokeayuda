@@ -4,6 +4,7 @@ import com.unsa.pokeayuda.data.local.entity.EquipoPokemonEntity
 
 interface EquipoPokemonRepository {
     suspend fun getAll(): List<EquipoPokemonEntity>
+    suspend fun getByGeneracion(idGeneracion: Int): List<EquipoPokemonEntity>
     suspend fun getId(id: Int): EquipoPokemonEntity?
     suspend fun insert(entity: EquipoPokemonEntity)
     suspend fun update(entity: EquipoPokemonEntity)

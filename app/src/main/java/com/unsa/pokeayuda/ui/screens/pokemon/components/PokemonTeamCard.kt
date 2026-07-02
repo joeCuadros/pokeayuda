@@ -1,6 +1,7 @@
 package com.unsa.pokeayuda.ui.screens.pokemon.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.unsa.pokeayuda.data.local.entity.EquipoPokemonEntity
 import com.unsa.pokeayuda.data.remote.model.pokemon.PokemonGeneracionResult
+import com.unsa.pokeayuda.utils.PokemonTypeStyles
 import com.unsa.pokeayuda.utils.translations.StatTranslations
 import com.unsa.pokeayuda.utils.translations.TypeTranslations
 
@@ -89,15 +91,21 @@ fun PokemonTeamCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         detalle.types.sortedBy { it.slot }.forEach { tipo ->
+                            val style = PokemonTypeStyles.get(tipo.type.name)
                             Text(
-                                text = TypeTranslations.translate(tipo.type.name),
+                                text = style.displayName,
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                color = style.textColor,
                                 modifier = Modifier
+                                    .border(
+                                        width = 1.dp,
+                                        color = style.borderColor,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
                                     .background(
-                                        color = MaterialTheme.colorScheme.primaryContainer,
-                                        shape = RoundedCornerShape(4.dp)
+                                        color = style.backgroundColor,
+                                        shape = RoundedCornerShape(8.dp)
                                     )
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                             )
@@ -112,28 +120,11 @@ fun PokemonTeamCard(
                     .padding(12.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    AsyncImage(
-                        model = detalle?.sprites,
-                        contentDescription = detalle?.name,
-                        modifier = Modifier.size(64.dp)
-                    )
-                    IconButton(
-                        onClick = onEliminar,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Eliminar",
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
+                AsyncImage(
+                    model = detalle?.sprites,
+                    contentDescription = detalle?.name,
+                    modifier = Modifier.size(64.dp)
+                )
 
                 Text(
                     text = "$nombre - Gen ${entidad.idGeneracion}",
@@ -159,27 +150,50 @@ fun PokemonTeamCard(
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             detalle.types.sortedBy { it.slot }.forEach { tipo ->
+                                val style = PokemonTypeStyles.get(tipo.type.name)
                                 Text(
-                                    text = TypeTranslations.translate(tipo.type.name),
-                                    style = MaterialTheme.typography.labelSmall,
+                                    text = style.displayName,
+                                    style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    color = style.textColor,
                                     modifier = Modifier
-                                        .background(
-                                            color = MaterialTheme.colorScheme.primaryContainer,
-                                            shape = RoundedCornerShape(4.dp)
+                                        .border(
+                                            width = 1.dp,
+                                            color = style.borderColor,
+                                            shape = RoundedCornerShape(8.dp)
                                         )
-                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                        .background(
+                                            color = style.backgroundColor,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
                             }
                         }
                     }
-                    Text(
-                        text = "Ver detalles",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { onCardClick(entidad.idPokemon) }
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Ver detalles",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable { onCardClick(entidad.idPokemon) }
+                        )
+                        IconButton(
+                            onClick = onEliminar,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Eliminar",
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -21,6 +21,15 @@ class EquipoPokemonRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getByGeneracion(idGeneracion: Int): List<EquipoPokemonEntity> {
+        return try {
+            equipoPokemonDao.getByGeneracion(idGeneracion)
+        } catch (e: Exception) {
+            Log.d("DEBUG", "Fallo al obtener equipo por generación desde Room: ${e.message}")
+            emptyList()
+        }
+    }
+
     override suspend fun getId(id: Int): EquipoPokemonEntity? {
         return try {
             equipoPokemonDao.getId(id)

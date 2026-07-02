@@ -64,7 +64,7 @@ class PokemonViewModel @Inject constructor(
                 }
                 try {
                     val disponibles = generacionRepository.getId(idGen, nombreGen)
-                    val equipo = equipoPokemonRepository.getAll()
+                    val equipo = equipoPokemonRepository.getByGeneracion(idGen)
                     _state.update {
                         it.copy(
                             nombresPokemonDisponibles = disponibles,
@@ -111,7 +111,7 @@ class PokemonViewModel @Inject constructor(
                 )
                 equipoPokemonRepository.insert(nuevaEntidad)
 
-                val nuevoEquipo = equipoPokemonRepository.getAll()
+                val nuevoEquipo = equipoPokemonRepository.getByGeneracion(_state.value.idGeneracionActual)
                 _state.update { it.copy(equipoActual = nuevoEquipo) }
                 val nombrePokemon = currentState.nombresPokemonDisponibles.getOrNull(idPokemon - 1) ?: ""
                 if (nombrePokemon.isNotBlank()) {
@@ -124,7 +124,7 @@ class PokemonViewModel @Inject constructor(
     private fun eliminarDelEquipo(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             equipoPokemonRepository.deleteId(id)
-            val nuevoEquipo = equipoPokemonRepository.getAll()
+            val nuevoEquipo = equipoPokemonRepository.getByGeneracion(_state.value.idGeneracionActual)
             _state.update { currentState ->
                 val idPokemonAsociado = currentState.equipoActual.find { it.id == id }?.idPokemon
                 val mapaModificado = currentState.detallesPokemonCargados.toMutableMap().apply {

@@ -13,6 +13,9 @@ interface EquipoPokemonDao {
     @Query("SELECT * FROM equipo_pokemon")
     suspend fun getAll(): List<EquipoPokemonEntity>
 
+    @Query("SELECT * FROM equipo_pokemon WHERE idGeneracion = :idGeneracion")
+    suspend fun getByGeneracion(idGeneracion: Int): List<EquipoPokemonEntity>
+
     @Query("SELECT * FROM equipo_pokemon WHERE id = :id")
     suspend fun getId(id: Int): EquipoPokemonEntity?
 
