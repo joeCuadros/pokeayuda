@@ -16,11 +16,11 @@ interface HabilidadDao {
 
     @Query("""
     SELECT * FROM habilidad
-        WHERE idPokemon = :idPokemon
+        WHERE idHabilidad = :idHabilidad
         AND idGeneracion = :idGeneracion
     """)
     suspend fun getId(
-        idPokemon: Int,
+        idHabilidad: Int,
         idGeneracion: Int
     ): HabilidadEntity?
 
@@ -32,11 +32,11 @@ interface HabilidadDao {
 
     @Query("""
     DELETE FROM habilidad
-        WHERE idPokemon = :idPokemon
+        WHERE idHabilidad = :idHabilidad
         AND idGeneracion = :idGeneracion
     """)
     suspend fun deleteId(
-        idPokemon: Int,
+        idHabilidad: Int,
         idGeneracion: Int
     )
 
@@ -45,7 +45,7 @@ interface HabilidadDao {
 
     @Query("""
         SELECT IFNULL(SUM(
-            LENGTH(CAST(idPokemon AS BLOB)) +
+            LENGTH(CAST(idHabilidad AS BLOB)) +
             LENGTH(CAST(idGeneracion AS BLOB)) +
             LENGTH(nombrePokemon) +
             LENGTH(nombreGeneracion) +

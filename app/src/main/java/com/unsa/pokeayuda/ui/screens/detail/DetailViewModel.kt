@@ -99,7 +99,7 @@ class DetailViewModel @Inject constructor(
             state = state.copy(isLoadingEvoluciones = true, errorEvoluciones = null)
             try {
                 val pokemonNombre = state.pokemonDetalle?.name ?: ""
-                val resultado = cadenaEvolutivaRepository.getId(state.pokemonId, pokemonNombre)
+                val resultado = cadenaEvolutivaRepository.getId(state.pokemonId, pokemonNombre)  // OJO
                 state = state.copy(
                     evolucionDetalle = resultado,
                     isLoadingEvoluciones = false
@@ -120,12 +120,12 @@ class DetailViewModel @Inject constructor(
             state = state.copy(isLoadingAtaques = true, errorAtaques = null)
             try {
                 val genNombre = state.nombreGeneracionActual
-                val idGen = genNombre.filter { it.isDigit() }.toIntOrNull() ?: 1
+                val idGen = GenerationConstants.getId(genNombre) ?: 0
 
                 val ataquesList = mutableListOf<MoveGeneracionResult>()
                 state.pokemonDetalle?.moves?.keys?.forEach { nombreAtaque ->
                     ataqueRepository.getId(
-                        idPokemon = state.pokemonId,
+                        idAtaque = state.pokemonId,  // OJO
                         idGeneracion = idGen,
                         nombreAtaque = nombreAtaque,
                         nombreGeneracion = genNombre
@@ -149,8 +149,8 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val genNombre = state.nombreGeneracionActual
-                val idGen = genNombre.filter { it.isDigit() }.toIntOrNull() ?: 1
-                val detalle = ataqueRepository.getId(state.pokemonId, idGen, nombreAtaque, genNombre)
+                val idGen = GenerationConstants.getId(genNombre) ?: 0
+                val detalle = ataqueRepository.getId(state.pokemonId, idGen, nombreAtaque, genNombre)  // OJO
                 state = state.copy(ataqueSeleccionadoDetalle = detalle)
             } catch (_: Exception) {}
         }
@@ -163,12 +163,12 @@ class DetailViewModel @Inject constructor(
             state = state.copy(isLoadingHabilidades = true, errorHabilidades = null)
             try {
                 val genNombre = state.nombreGeneracionActual
-                val idGen = genNombre.filter { it.isDigit() }.toIntOrNull() ?: 1
+                val idGen = GenerationConstants.getId(genNombre) ?: 0
 
                 val habilidadesList = mutableListOf<AbilityGeneracionResult>()
                 state.pokemonDetalle?.abilities?.forEach { slotDto ->
                     habilidadRepository.getId(
-                        idPokemon = state.pokemonId,
+                        idHabilidad = state.pokemonId,  // OJO
                         idGeneracion = idGen,
                         nombreHabilidad = slotDto.ability?.name ?: "",
                         nombreGeneracion = genNombre
@@ -192,8 +192,8 @@ class DetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val genNombre = state.nombreGeneracionActual
-                val idGen = genNombre.filter { it.isDigit() }.toIntOrNull() ?: 1
-                val detalle = habilidadRepository.getId(state.pokemonId, idGen, nombreHabilidad, genNombre)
+                val idGen = GenerationConstants.getId(genNombre) ?: 0
+                val detalle = habilidadRepository.getId(state.pokemonId, idGen, nombreHabilidad, genNombre) // OJO
                 state = state.copy(habilidadSeleccionadaDetalle = detalle)
             } catch (_: Exception) {}
         }
@@ -206,12 +206,12 @@ class DetailViewModel @Inject constructor(
             state = state.copy(isLoadingTipos = true, errorTipos = null)
             try {
                 val genNombre = state.nombreGeneracionActual
-                val idGen = genNombre.filter { it.isDigit() }.toIntOrNull() ?: 1
+                val idGen = GenerationConstants.getId(genNombre) ?: 0
 
                 val tiposList = mutableListOf<TypeGeneracionResult>()
                 state.pokemonDetalle?.types?.forEach { typeSlot ->
                     tipoRepository.getId(
-                        idPokemon = state.pokemonId,
+                        idTipo = 0,
                         idGeneracion = idGen,
                         nombreTipo = typeSlot.type.name,
                         nombreGeneracion = genNombre

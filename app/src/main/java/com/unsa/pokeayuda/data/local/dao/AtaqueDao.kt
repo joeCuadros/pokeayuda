@@ -15,11 +15,11 @@ interface AtaqueDao {
 
     @Query("""
     SELECT * FROM ataque
-        WHERE idPokemon = :idPokemon
+        WHERE idAtaque = :idAtaque
         AND idGeneracion = :idGeneracion
     """)
     suspend fun getId(
-        idPokemon: Int,
+        idAtaque: Int,
         idGeneracion: Int
     ): AtaqueEntity?
 
@@ -31,11 +31,11 @@ interface AtaqueDao {
 
     @Query("""
     DELETE FROM ataque
-        WHERE idPokemon = :idPokemon
+        WHERE idAtaque = :idAtaque
         AND idGeneracion = :idGeneracion
     """)
     suspend fun deleteId(
-        idPokemon: Int,
+        idAtaque: Int,
         idGeneracion: Int
     )
 
@@ -44,7 +44,7 @@ interface AtaqueDao {
 
     @Query("""
         SELECT IFNULL(SUM(
-            LENGTH(CAST(idPokemon AS BLOB)) +
+            LENGTH(CAST(idAtaque AS BLOB)) +
             LENGTH(CAST(idGeneracion AS BLOB)) +
             LENGTH(nombrePokemon) +
             LENGTH(nombreGeneracion) +

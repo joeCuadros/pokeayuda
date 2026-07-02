@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
-import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -39,6 +39,7 @@ import coil3.compose.AsyncImage
 import com.unsa.pokeayuda.ui.components.AppSection
 import com.unsa.pokeayuda.ui.components.PokemonStatItem
 import com.unsa.pokeayuda.ui.components.PokemonTypeChip
+import com.unsa.pokeayuda.ui.screens.detail.components.MatrizTiposComponent
 import com.unsa.pokeayuda.utils.translations.StatTranslations
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -190,16 +191,18 @@ fun DetailScreen (
 
                 // ---------- Seccion 5 ----------
                 item {
-                    AppSection(title = "Matriz de Tipos", icon = Icons.Default.GridOn) {
+                    AppSection(title = "Debilidades y fortalezas", icon = Icons.Default.Shield) {
                         if (state.tiposVisibles.isEmpty() && !state.isLoadingTipos) {
                             Button(onClick = { viewModel.onEvent(DetailEvent.ActivarMatrizTipos) }) {
-                                Text("Calcular Matriz")
+                                Text("Ver Debilidades y fortalezas")
                             }
                         }
                         if (state.isLoadingTipos) {
                             CircularProgressIndicator()
                         }
-                        // Detalle vacío por ahora
+                        if (state.tiposVisibles.isNotEmpty()) {
+                            MatrizTiposComponent(tiposVisibles = state.tiposVisibles)
+                        }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                 }

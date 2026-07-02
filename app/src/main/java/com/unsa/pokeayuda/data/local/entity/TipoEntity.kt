@@ -4,10 +4,10 @@ import androidx.room.Entity
 
 @Entity(
     tableName = "tipo",
-    primaryKeys = ["idPokemon", "idGeneracion"]
+    primaryKeys = ["idTipo", "idGeneracion"]
 )
 data class TipoEntity(
-    val idPokemon: Int,
+    val idTipo: Int,
     val idGeneracion: Int,
     val nombrePokemon: String,
     val nombreGeneracion: String,

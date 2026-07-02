@@ -16,11 +16,11 @@ interface TipoDao {
 
     @Query("""
     SELECT * FROM tipo
-        WHERE idPokemon = :idPokemon
+        WHERE idTipo = :idTipo
         AND idGeneracion = :idGeneracion
     """)
     suspend fun getId(
-        idPokemon: Int,
+        idTipo: Int,
         idGeneracion: Int
     ): TipoEntity?
 
@@ -32,11 +32,11 @@ interface TipoDao {
 
     @Query("""
     DELETE FROM tipo
-        WHERE idPokemon = :idPokemon
+        WHERE idTipo = :idTipo
         AND idGeneracion = :idGeneracion
     """)
     suspend fun deleteId(
-        idPokemon: Int,
+        idTipo: Int,
         idGeneracion: Int
     )
 
@@ -45,7 +45,7 @@ interface TipoDao {
 
     @Query("""
         SELECT IFNULL(SUM(
-            LENGTH(CAST(idPokemon AS BLOB)) +
+            LENGTH(CAST(idTipo AS BLOB)) +
             LENGTH(CAST(idGeneracion AS BLOB)) +
             LENGTH(nombrePokemon) +
             LENGTH(nombreGeneracion) +

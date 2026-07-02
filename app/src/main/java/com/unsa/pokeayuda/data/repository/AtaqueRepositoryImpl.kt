@@ -30,16 +30,16 @@ class AtaqueRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getId(idPokemon: Int, idGeneracion: Int, nombreAtaque: String, nombreGeneracion: String): MoveGeneracionResult? {
+    override suspend fun getId(idAtaque: Int, idGeneracion: Int, nombreAtaque: String, nombreGeneracion: String): MoveGeneracionResult? {
         return try {
-            val local = ataqueDao.getId(idPokemon, idGeneracion)
+            val local = ataqueDao.getId(idAtaque, idGeneracion)
             if (local == null) {
-                fetchAndSave(idPokemon, idGeneracion, nombreAtaque, nombreGeneracion)
+                fetchAndSave(idAtaque, idGeneracion, nombreAtaque, nombreGeneracion)
             } else {
                 val diasConfigurados = appPreferences.syncDays.firstOrNull() ?: 7
                 val currentTime = System.currentTimeMillis()
                 if ((currentTime - local.fecha) > TimeUnit.DAYS.toMillis(diasConfigurados.toLong())) {
-                    fetchAndSave(idPokemon, idGeneracion, nombreAtaque, nombreGeneracion)
+                    fetchAndSave(idAtaque, idGeneracion, nombreAtaque, nombreGeneracion)
                 } else {
                     gson.fromJson(local.data, MoveGeneracionResult::class.java)
                 }
@@ -50,12 +50,12 @@ class AtaqueRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun fetchAndSave(idPokemon: Int, idGeneracion: Int, nombreAtaque: String, nombreGeneracion: String): MoveGeneracionResult? {
+    private suspend fun fetchAndSave(idAtaque: Int, idGeneracion: Int, nombreAtaque: String, nombreGeneracion: String): MoveGeneracionResult? {
         val remoteData = remoteDataSource.obtenerMasInfoAtaque(nombreAtaque, nombreGeneracion)
         if (remoteData != null) {
             val jsonStr = gson.toJson(remoteData)
             val entity = AtaqueEntity(
-                idPokemon = idPokemon,
+                idAtaque = idAtaque,
                 idGeneracion = idGeneracion,
                 nombrePokemon = nombreAtaque,
                 nombreGeneracion = nombreGeneracion,
@@ -70,9 +70,9 @@ class AtaqueRepositoryImpl @Inject constructor(
         return null
     }
 
-    override suspend fun deleteId(idPokemon: Int, idGeneracion: Int) {
+    override suspend fun deleteId(idAtaque: Int, idGeneracion: Int) {
         try {
-            ataqueDao.deleteId(idPokemon, idGeneracion)
+            ataqueDao.deleteId(idAtaque, idGeneracion)
         } catch (e: Exception) {
             Log.d("DEBUG", "Fallo al eliminar Ataque por ID: ${e.message}")
         }

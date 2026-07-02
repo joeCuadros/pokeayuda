@@ -30,16 +30,16 @@ class HabilidadRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getId(idPokemon: Int, idGeneracion: Int, nombreHabilidad: String, nombreGeneracion: String): AbilityGeneracionResult? {
+    override suspend fun getId(idHabilidad: Int, idGeneracion: Int, nombreHabilidad: String, nombreGeneracion: String): AbilityGeneracionResult? {
         return try {
-            val local = habilidadDao.getId(idPokemon, idGeneracion)
+            val local = habilidadDao.getId(idHabilidad, idGeneracion)
             if (local == null) {
-                fetchAndSave(idPokemon, idGeneracion, nombreHabilidad, nombreGeneracion)
+                fetchAndSave(idHabilidad, idGeneracion, nombreHabilidad, nombreGeneracion)
             } else {
                 val diasConfigurados = appPreferences.syncDays.firstOrNull() ?: 7
                 val currentTime = System.currentTimeMillis()
                 if ((currentTime - local.fecha) > TimeUnit.DAYS.toMillis(diasConfigurados.toLong())) {
-                    fetchAndSave(idPokemon, idGeneracion, nombreHabilidad, nombreGeneracion)
+                    fetchAndSave(idHabilidad, idGeneracion, nombreHabilidad, nombreGeneracion)
                 } else {
                     gson.fromJson(local.data, AbilityGeneracionResult::class.java)
                 }
@@ -50,12 +50,12 @@ class HabilidadRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun fetchAndSave(idPokemon: Int, idGeneracion: Int, nombreHabilidad: String, nombreGeneracion: String): AbilityGeneracionResult? {
+    private suspend fun fetchAndSave(idHabilidad: Int, idGeneracion: Int, nombreHabilidad: String, nombreGeneracion: String): AbilityGeneracionResult? {
         val remoteData = remoteDataSource.obtenerInfoHabilidad(nombreHabilidad, nombreGeneracion)
         if (remoteData != null) {
             val jsonStr = gson.toJson(remoteData)
             val entity = HabilidadEntity(
-                idPokemon = idPokemon,
+                idHabilidad = idHabilidad,
                 idGeneracion = idGeneracion,
                 nombrePokemon = nombreHabilidad,
                 nombreGeneracion = nombreGeneracion,
@@ -70,9 +70,9 @@ class HabilidadRepositoryImpl @Inject constructor(
         return null
     }
 
-    override suspend fun deleteId(idPokemon: Int, idGeneracion: Int) {
+    override suspend fun deleteId(idHabilidad: Int, idGeneracion: Int) {
         try {
-            habilidadDao.deleteId(idPokemon, idGeneracion)
+            habilidadDao.deleteId(idHabilidad, idGeneracion)
         } catch (e: Exception) {
             Log.d("DEBUG", "Fallo al eliminar Habilidad por ID: ${e.message}")
         }

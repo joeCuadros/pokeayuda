@@ -8,6 +8,7 @@ import com.unsa.pokeayuda.data.local.entity.TipoEntity
 import com.unsa.pokeayuda.data.remote.PokemonRemoteDataSource
 import com.unsa.pokeayuda.data.remote.model.type.TypeGeneracionResult
 import com.unsa.pokeayuda.domain.repository.TipoRepository
+import com.unsa.pokeayuda.utils.constants.GenerationConstants
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -30,16 +31,19 @@ class TipoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getId(idPokemon: Int, idGeneracion: Int, nombreTipo: String, nombreGeneracion: String): TypeGeneracionResult? {
+    override suspend fun getId(idTipo: Int, idGeneracion: Int, nombreTipo: String, nombreGeneracion: String): TypeGeneracionResult? {
         return try {
-            val local = tipoDao.getId(idPokemon, idGeneracion)
+            if (idTipo <= 0) {
+                return fetchAndSave(nombreTipo, nombreGeneracion)
+            }
+            val local = tipoDao.getId(idTipo, idGeneracion)
             if (local == null) {
-                fetchAndSave(idPokemon, idGeneracion, nombreTipo, nombreGeneracion)
+                fetchAndSave(idTipo, idGeneracion, nombreTipo, nombreGeneracion)
             } else {
                 val diasConfigurados = appPreferences.syncDays.firstOrNull() ?: 7
                 val currentTime = System.currentTimeMillis()
                 if ((currentTime - local.fecha) > TimeUnit.DAYS.toMillis(diasConfigurados.toLong())) {
-                    fetchAndSave(idPokemon, idGeneracion, nombreTipo, nombreGeneracion)
+                    fetchAndSave(idTipo, idGeneracion, nombreTipo, nombreGeneracion)
                 } else {
                     gson.fromJson(local.data, TypeGeneracionResult::class.java)
                 }
@@ -50,12 +54,12 @@ class TipoRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun fetchAndSave(idPokemon: Int, idGeneracion: Int, nombreTipo: String, nombreGeneracion: String): TypeGeneracionResult? {
+    private suspend fun fetchAndSave(idTipo: Int, idGeneracion: Int, nombreTipo: String, nombreGeneracion: String): TypeGeneracionResult? {
         val remoteData = remoteDataSource.obtenerInfoTipo(nombreTipo, nombreGeneracion)
         if (remoteData != null) {
             val jsonStr = gson.toJson(remoteData)
             val entity = TipoEntity(
-                idPokemon = idPokemon,
+                idTipo = idTipo,
                 idGeneracion = idGeneracion,
                 nombrePokemon = nombreTipo,
                 nombreGeneracion = nombreGeneracion,
@@ -70,9 +74,30 @@ class TipoRepositoryImpl @Inject constructor(
         return null
     }
 
-    override suspend fun deleteId(idPokemon: Int, idGeneracion: Int) {
+    private suspend fun fetchAndSave(nombreTipo: String, nombreGeneracion: String): TypeGeneracionResult? {
+        val remoteData = remoteDataSource.obtenerInfoTipo(nombreTipo, nombreGeneracion)
+        if (remoteData != null) {
+            val jsonStr = gson.toJson(remoteData)
+            val idGenReal = GenerationConstants.getId(nombreGeneracion) ?: 1
+            val entity = TipoEntity(
+                idTipo = remoteData.id,
+                idGeneracion = idGenReal,
+                nombrePokemon = nombreTipo,
+                nombreGeneracion = nombreGeneracion,
+                fecha = System.currentTimeMillis(),
+                data = jsonStr
+            )
+            tipoDao.insert(entity)
+            return remoteData
+        } else {
+            Log.d("DEBUG", "Fallo al consumir remotamente Tipo: $nombreTipo")
+        }
+        return null
+    }
+
+    override suspend fun deleteId(idTipo: Int, idGeneracion: Int) {
         try {
-            tipoDao.deleteId(idPokemon, idGeneracion)
+            tipoDao.deleteId(idTipo, idGeneracion)
         } catch (e: Exception) {
             Log.d("DEBUG", "Fallo al eliminar Tipo por ID: ${e.message}")
         }
