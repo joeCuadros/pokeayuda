@@ -8,6 +8,7 @@ import com.unsa.pokeayuda.data.local.entity.AtaqueEntity
 import com.unsa.pokeayuda.data.remote.PokemonRemoteDataSource
 import com.unsa.pokeayuda.data.remote.model.move.MoveGeneracionResult
 import com.unsa.pokeayuda.domain.repository.AtaqueRepository
+import com.unsa.pokeayuda.utils.constants.GenerationConstants
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -32,6 +33,9 @@ class AtaqueRepositoryImpl @Inject constructor(
 
     override suspend fun getId(idAtaque: Int, idGeneracion: Int, nombreAtaque: String, nombreGeneracion: String): MoveGeneracionResult? {
         return try {
+            if (idAtaque <= 0) {
+                return fetchAndSave(nombreAtaque, nombreGeneracion)
+            }
             val local = ataqueDao.getId(idAtaque, idGeneracion)
             if (local == null) {
                 fetchAndSave(idAtaque, idGeneracion, nombreAtaque, nombreGeneracion)
@@ -57,6 +61,27 @@ class AtaqueRepositoryImpl @Inject constructor(
             val entity = AtaqueEntity(
                 idAtaque = idAtaque,
                 idGeneracion = idGeneracion,
+                nombrePokemon = nombreAtaque,
+                nombreGeneracion = nombreGeneracion,
+                fecha = System.currentTimeMillis(),
+                data = jsonStr
+            )
+            ataqueDao.insert(entity)
+            return remoteData
+        } else {
+            Log.d("DEBUG", "Fallo al consumir remotamente Ataque: $nombreAtaque")
+        }
+        return null
+    }
+
+    private suspend fun fetchAndSave(nombreAtaque: String, nombreGeneracion: String): MoveGeneracionResult? {
+        val remoteData = remoteDataSource.obtenerMasInfoAtaque(nombreAtaque, nombreGeneracion)
+        if (remoteData != null) {
+            val jsonStr = gson.toJson(remoteData)
+            val idGenReal = GenerationConstants.getId(nombreGeneracion) ?: 1
+            val entity = AtaqueEntity(
+                idAtaque = remoteData.id,
+                idGeneracion = idGenReal,
                 nombrePokemon = nombreAtaque,
                 nombreGeneracion = nombreGeneracion,
                 fecha = System.currentTimeMillis(),

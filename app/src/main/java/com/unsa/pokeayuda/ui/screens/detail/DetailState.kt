@@ -18,7 +18,7 @@ data class DetailState(
     val errorEvoluciones: String? = null,
 
     val isLoadingAtaques: Boolean = false,
-    val ataquesVisibles: List<MoveGeneracionResult> = emptyList(),
+    val ataquesVisibles: Map<String, Map<Int, List<MoveGeneracionResult>>> = emptyMap(),
     val juegoSeleccionado: String = "",
     val ataqueSeleccionadoDetalle: MoveGeneracionResult? = null,
     val errorAtaques: String? = null,

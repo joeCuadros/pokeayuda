@@ -83,7 +83,7 @@ private fun TarjetaHabilidadInteractiva(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = habilidad.nameEs.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                text = habilidad.nameEs,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface

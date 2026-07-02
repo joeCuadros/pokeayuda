@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountTree
 import androidx.compose.material.icons.filled.Info
@@ -24,6 +25,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,6 +44,7 @@ import com.unsa.pokeayuda.ui.components.PokemonTypeChip
 import com.unsa.pokeayuda.ui.screens.detail.components.CadenaEvolutivaComponent
 import com.unsa.pokeayuda.ui.screens.detail.components.HabilidadesComponent
 import com.unsa.pokeayuda.ui.screens.detail.components.MatrizTiposComponent
+import com.unsa.pokeayuda.ui.screens.detail.components.TablaMovimientosYProgresoComponent
 import com.unsa.pokeayuda.utils.translations.StatTranslations
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,32 +107,40 @@ fun DetailScreen (
                     AppSection(title = "Información Básica", icon = Icons.Default.Info) {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
                         ) {
                             Column(
                                 modifier = Modifier.padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                                verticalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
-                                // [Nombre - Generacion]
+                                // Nombre y Generación
                                 Text(
-                                    text = "$nombrePokemon - ${state.nombreGeneracionActual}",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold
+                                    text = "${nombrePokemon.replaceFirstChar { it.uppercase() }} — ${state.nombreGeneracionActual.uppercase()}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
-                                // [Tipos]
+                                // Chips de Tipos
                                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     pokemon.types.sortedBy { it.slot }.forEach { tipo ->
                                         PokemonTypeChip(type = tipo.type.name)
                                     }
                                 }
-                                // [Stats]
+                                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                                // Título de Sección Estadísticas
                                 Text(
                                     text = "Estadísticas Base",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
+                                // Calculo de promedio nativo
                                 val promedio = pokemon.stats.map { it.baseStat }.average()
-                                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                // Lista de Stats con el indicador integrado
+                                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                     pokemon.stats.forEach { stat ->
                                         PokemonStatItem(
                                             name = StatTranslations.translate(stat.stat.name),
@@ -138,6 +149,24 @@ fun DetailScreen (
                                             promedio = promedio
                                         )
                                     }
+                                }
+                                // Indicador del promedio general
+                                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = "Media global del Pokémon:",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = "%.1f pts".format(promedio),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
                             }
                         }
@@ -155,8 +184,14 @@ fun DetailScreen (
                         if (state.isLoadingAtaques) {
                             CircularProgressIndicator()
                         }
-                        if (state.habilidadesVisibles.isNotEmpty()) {
-                            HabilidadesComponent(habilidadesVisibles = state.habilidadesVisibles)
+                        if (state.ataquesVisibles.isNotEmpty()) {
+                            state.pokemonDetalle?.let { pokemon ->
+                                TablaMovimientosYProgresoComponent(
+                                    pokemon = pokemon,
+                                    ataquesPorJuego = state.ataquesVisibles,
+                                    evolucionDetalle = state.evolucionDetalle
+                                )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
@@ -172,7 +207,9 @@ fun DetailScreen (
                         if (state.isLoadingHabilidades) {
                             CircularProgressIndicator()
                         }
-                        // Detalle vacío por ahora
+                        if (state.habilidadesVisibles.isNotEmpty()) {
+                            HabilidadesComponent(habilidadesVisibles = state.habilidadesVisibles)
+                        }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                 }

@@ -1,5 +1,6 @@
 package com.unsa.pokeayuda.ui.screens.detail
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -121,19 +122,45 @@ class DetailViewModel @Inject constructor(
             try {
                 val genNombre = state.nombreGeneracionActual
                 val idGen = GenerationConstants.getId(genNombre) ?: 0
+                val juegosDeLaGen = GenerationConstants.getGames(genNombre)
+                val nombresAtaquesUnicos = mutableSetOf<String>()
+                juegosDeLaGen.forEach { juego ->
+                    val listaMovimientos = state.pokemonDetalle?.moves?.get(juego)?.get("level-up") ?: emptyList()
+                    listaMovimientos.forEach { movimiento ->
+                        nombresAtaquesUnicos.add(movimiento.name)
+                    }
+                }
 
-                val ataquesList = mutableListOf<MoveGeneracionResult>()
-                state.pokemonDetalle?.moves?.keys?.forEach { nombreAtaque ->
+                val cacheAtaquesDetalle = mutableMapOf<String, MoveGeneracionResult>()
+                nombresAtaquesUnicos.forEach { nombreAtaque ->
                     ataqueRepository.getId(
                         idAtaque = 0,  // OJO
                         idGeneracion = idGen,
                         nombreAtaque = nombreAtaque,
                         nombreGeneracion = genNombre
-                    )?.let { ataquesList.add(it) }
+                    )?.let { detalleCompleto ->
+                        cacheAtaquesDetalle[nombreAtaque] = detalleCompleto
+                    }
+                }
+
+                val diccionarioAtaquesPorJuego = mutableMapOf<String, Map<Int, List<MoveGeneracionResult>>>()
+
+                juegosDeLaGen.forEach { juego ->
+                    val listaMovimientosDto = state.pokemonDetalle?.moves?.get(juego)?.get("level-up") ?: emptyList()
+
+                    val mapaNivelAtaques = listaMovimientosDto
+                        .groupBy { it.level }
+                        .mapValues { (_, listaDtos) ->
+                            listaDtos.mapNotNull { dto -> cacheAtaquesDetalle[dto.name] }
+                        }
+
+                    if (mapaNivelAtaques.isNotEmpty()) {
+                        diccionarioAtaquesPorJuego[juego] = mapaNivelAtaques
+                    }
                 }
 
                 state = state.copy(
-                    ataquesVisibles = ataquesList,
+                    ataquesVisibles = diccionarioAtaquesPorJuego,
                     isLoadingAtaques = false
                 )
             } catch (e: Exception) {
@@ -150,7 +177,7 @@ class DetailViewModel @Inject constructor(
             try {
                 val genNombre = state.nombreGeneracionActual
                 val idGen = GenerationConstants.getId(genNombre) ?: 0
-                val detalle = ataqueRepository.getId(state.pokemonId, idGen, nombreAtaque, genNombre)  // OJO
+                val detalle = ataqueRepository.getId(0, idGen, nombreAtaque, genNombre)  // OJO
                 state = state.copy(ataqueSeleccionadoDetalle = detalle)
             } catch (_: Exception) {}
         }
