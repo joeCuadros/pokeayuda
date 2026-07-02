@@ -29,8 +29,11 @@ fun AppNavHost(
             )
         }
 
-        composable(NavRoutes.PokemonDetail.route) {
-            DetailScreen()
+        composable(NavRoutes.PokemonDetail.route) { backStackEntry ->
+            val pokemonId = backStackEntry.arguments?.getString("pokemonId")?.toIntOrNull() ?: return@composable
+            DetailScreen(
+                pokemonId = pokemonId
+            )
         }
 
         composable(NavRoutes.Settings.route) {

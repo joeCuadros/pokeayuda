@@ -1,7 +1,5 @@
 package com.unsa.pokeayuda.ui.screens.pokemon.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
@@ -34,9 +31,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.unsa.pokeayuda.data.local.entity.EquipoPokemonEntity
 import com.unsa.pokeayuda.data.remote.model.pokemon.PokemonGeneracionResult
-import com.unsa.pokeayuda.utils.PokemonTypeStyles
+import com.unsa.pokeayuda.ui.components.PokemonTypeChip
 import com.unsa.pokeayuda.utils.translations.StatTranslations
-import com.unsa.pokeayuda.utils.translations.TypeTranslations
 
 @Composable
 fun PokemonTeamCard(
@@ -91,24 +87,7 @@ fun PokemonTeamCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         detalle.types.sortedBy { it.slot }.forEach { tipo ->
-                            val style = PokemonTypeStyles.get(tipo.type.name)
-                            Text(
-                                text = style.displayName,
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = style.textColor,
-                                modifier = Modifier
-                                    .border(
-                                        width = 1.dp,
-                                        color = style.borderColor,
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .background(
-                                        color = style.backgroundColor,
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
+                            PokemonTypeChip(type = tipo.type.name)
                         }
                     }
                 }
@@ -150,24 +129,7 @@ fun PokemonTeamCard(
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             detalle.types.sortedBy { it.slot }.forEach { tipo ->
-                                val style = PokemonTypeStyles.get(tipo.type.name)
-                                Text(
-                                    text = style.displayName,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = style.textColor,
-                                    modifier = Modifier
-                                        .border(
-                                            width = 1.dp,
-                                            color = style.borderColor,
-                                            shape = RoundedCornerShape(8.dp)
-                                        )
-                                        .background(
-                                            color = style.backgroundColor,
-                                            shape = RoundedCornerShape(8.dp)
-                                        )
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                                )
+                                PokemonTypeChip(type = tipo.type.name)
                             }
                         }
                     }

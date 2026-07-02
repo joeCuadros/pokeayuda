@@ -1,6 +1,5 @@
 package com.unsa.pokeayuda.ui.screens.pokemon
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
