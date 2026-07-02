@@ -64,7 +64,7 @@ class PokemonViewModel @Inject constructor(
                 }
                 try {
                     generacionRepository.getId(idGen, nombreGen)
-                    val disponibles = generacionRepository.getAll()
+                    val disponibles = generacionRepository.getAllGeneration(idGen)
                     val equipo = equipoPokemonRepository.getByGeneracion(idGen)
                     _state.update {
                         it.copy(

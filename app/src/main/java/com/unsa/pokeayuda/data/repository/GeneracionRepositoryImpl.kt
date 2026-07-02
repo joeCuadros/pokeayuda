@@ -32,6 +32,19 @@ class GeneracionRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAllGeneration(id: Int): List<String> {
+        return try {
+            generacionPokemonDao.getAllGeneration(id)
+                .flatMap { entity ->
+                    gson.fromJson<List<String>>(entity.data, listType)
+                }
+                .distinct()
+        } catch (e: Exception) {
+            Log.d("DEBUG", "Fallo al obtener generaciones hasta ID $id de Room: ${e.message}")
+            emptyList()
+        }
+    }
+
     override suspend fun getId(id: Int, nombreGeneracion: String): List<String> {
         return try {
             val local = generacionPokemonDao.getId(id)

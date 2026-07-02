@@ -49,7 +49,7 @@ class BattleViewModel @Inject constructor(
                 val idGen = GenerationConstants.getId(genNombre) ?: 0
 
                 generacionRepository.getId(idGen, genNombre)
-                val disponibles = generacionRepository.getAll()
+                val disponibles = generacionRepository.getAllGeneration(idGen)
 
                 val equipoEntities = equipoPokemonRepository.getByGeneracion(idGen)
                 val listaEquipoFull = equipoEntities.mapNotNull { entidad ->
