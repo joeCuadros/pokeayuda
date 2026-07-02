@@ -25,15 +25,7 @@ data class PokemonStatRow(
     val stats: Map<String, Int>
 )
 
-data class PokemonEfectividadMatchup(
-    val idPokemon: Int,
-    val nombrePokemon: String,
-    val tablaOfensiva: List<EfectividadRow>,
-    val tablaDefensiva: List<EfectividadRow>
-)
-
-data class EfectividadRow(
-    val tipoAtacante: String,
-    val tipoDefensorCombinado: String,
-    val multiplicador: Float
+data class PokemonCompact(
+    val nombre: String,
+    val tipos: List<String>
 )

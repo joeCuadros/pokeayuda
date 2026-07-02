@@ -43,7 +43,7 @@ import com.unsa.pokeayuda.ui.components.PokemonStatItem
 import com.unsa.pokeayuda.ui.components.PokemonTypeChip
 import com.unsa.pokeayuda.ui.screens.detail.components.CadenaEvolutivaComponent
 import com.unsa.pokeayuda.ui.screens.detail.components.HabilidadesComponent
-import com.unsa.pokeayuda.ui.screens.detail.components.TablaEfectividadesComponent
+import com.unsa.pokeayuda.ui.components.TablaEfectividadesComponent
 import com.unsa.pokeayuda.ui.screens.detail.components.TablaMovimientosYProgresoComponent
 import com.unsa.pokeayuda.utils.PokemonTypeVS
 import com.unsa.pokeayuda.utils.translations.StatTranslations

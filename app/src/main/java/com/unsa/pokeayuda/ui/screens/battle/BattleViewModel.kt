@@ -149,15 +149,4 @@ class BattleViewModel @Inject constructor(
             statOrdenAscendente = nuevaDireccion
         )}
     }
-
-
-    private fun obtenerMultiplicador(tipoAtaque: TypeGeneracionResult, tipoDefensa: String): Float {
-        val rel = tipoAtaque.damageRelations
-        return when {
-            rel.doubleDamageTo.any { it.name == tipoDefensa } -> 2.0f
-            rel.halfDamageTo.any { it.name == tipoDefensa } -> 0.5f
-            rel.noDamageTo.any { it.name == tipoDefensa } -> 0.0f
-            else -> 1.0f
-        }
-    }
 }

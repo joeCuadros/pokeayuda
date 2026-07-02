@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -38,7 +41,11 @@ import coil3.compose.AsyncImage
 import com.unsa.pokeayuda.ui.components.AppSection
 import com.unsa.pokeayuda.ui.components.PokemonSelector
 import com.unsa.pokeayuda.ui.components.PokemonTypeChip
+import com.unsa.pokeayuda.ui.screens.battle.components.TablaCoberturaEquipoComponent
 import com.unsa.pokeayuda.ui.screens.battle.components.TablaStatsBattleComponent
+import com.unsa.pokeayuda.ui.components.TablaEfectividadesComponent
+import com.unsa.pokeayuda.ui.screens.battle.components.TablaDefensaEquipoComponent
+import com.unsa.pokeayuda.utils.PokemonTypeVS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -175,9 +182,79 @@ fun BattleScreen(
                 }
             }
             item {
-                AppSection(title = "Tabla de debilidades", icon = Icons.Default.Info) {
+                val listaTiposDefensores = state.rivalPokemon?.types
+                    ?.sortedBy { it.slot }
+                    ?.map { it.type.name.lowercase() } ?: emptyList()
 
+                val genKey = state.nombreGeneracionActual
+                AppSection(title = "Debilidades y fortalezas", icon = Icons.Default.Shield) {
+                    if (listaTiposDefensores.isEmpty()) {
+                        Text(
+                            text = "Esperando datos del rival...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(vertical = 12.dp)
+                        )
+                    } else {
+                        val matrizEfectividades = PokemonTypeVS.calcularDebilidades(genKey, listaTiposDefensores)
+                        TablaEfectividadesComponent(
+                            efectividades = matrizEfectividades,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp)
+                        )
+                    }
                 }
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            // Tabla de ataques
+            item {
+                AppSection(title = "Tabla de ataques", icon = Icons.Default.Info) {
+                    val tiposRivalActivo = state.rivalPokemon?.types
+                        ?.sortedBy { it.slot }
+                        ?.map { it.type.name } ?: emptyList()
+
+                    val miEquipoMapeado = state.equipoPokemon?.map { pok ->
+                        PokemonCompact(
+                            nombre = pok.name,
+                            tipos = pok.types.sortedBy { it.slot }.map { it.type.name }
+                        )
+                    } ?: emptyList()
+
+                    TablaCoberturaEquipoComponent(
+                        genKey = state.nombreGeneracionActual,
+                        tiposRival = tiposRivalActivo,
+                        miEquipo = miEquipoMapeado,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            // Tabla de Defensa (Resistencias del equipo)
+            item {
+                AppSection(title = "Tabla de defensa", icon = Icons.Default.Shield) {
+                    val tiposRivalActivo = state.rivalPokemon?.types
+                        ?.sortedBy { it.slot }
+                        ?.map { it.type.name } ?: emptyList()
+
+                    val miEquipoMapeado = state.equipoPokemon?.map { pok ->
+                        PokemonCompact(
+                            nombre = pok.name,
+                            tipos = pok.types.sortedBy { it.slot }.map { it.type.name }
+                        )
+                    } ?: emptyList()
+                    TablaDefensaEquipoComponent(
+                        genKey = state.nombreGeneracionActual,
+                        tiposRival = tiposRivalActivo,
+                        miEquipo = miEquipoMapeado,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(15.dp))
             }
         }
     }
