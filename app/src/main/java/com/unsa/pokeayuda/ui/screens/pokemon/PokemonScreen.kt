@@ -61,10 +61,7 @@ fun PokemonScreen(
                             viewModel.onEvent(PokemonEvent.CambiarBusqueda(it))
                         },
                         onPokemonSeleccionado = { nombreSeleccionado ->
-                            val index = state.nombresPokemonDisponibles.indexOf(nombreSeleccionado)
-                            if (index != -1) {
-                                viewModel.onEvent(PokemonEvent.AgregarAlEquipo(index + 1))
-                            }
+                            viewModel.onEvent(PokemonEvent.AgregarAlEquipo(nombreSeleccionado))
                         }
                     )
                 }

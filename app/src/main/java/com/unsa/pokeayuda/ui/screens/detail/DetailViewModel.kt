@@ -14,6 +14,7 @@ import com.unsa.pokeayuda.domain.repository.CadenaEvolutivaRepository
 import com.unsa.pokeayuda.domain.repository.HabilidadRepository
 import com.unsa.pokeayuda.domain.repository.PokemonRepository
 import com.unsa.pokeayuda.domain.repository.TipoRepository
+import com.unsa.pokeayuda.utils.constants.GenerationConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -68,7 +69,7 @@ class DetailViewModel @Inject constructor(
             state = state.copy(isLoadingPokemon = true, errorPokemon = null)
             try {
                 val genNombre = appPreferencesRepository.generation.first()
-                val idGen = genNombre.filter { it.isDigit() }.toIntOrNull() ?: 1
+                val idGen = GenerationConstants.getId(genNombre) ?: 0
 
                 val resultado = pokemonRepository.getId(
                     idPokemon = pokemonId,

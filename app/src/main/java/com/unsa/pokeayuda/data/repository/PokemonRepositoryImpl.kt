@@ -8,6 +8,7 @@ import com.unsa.pokeayuda.data.local.entity.PokemonEntity
 import com.unsa.pokeayuda.data.remote.PokemonRemoteDataSource
 import com.unsa.pokeayuda.data.remote.model.pokemon.PokemonGeneracionResult
 import com.unsa.pokeayuda.domain.repository.PokemonRepository
+import com.unsa.pokeayuda.utils.constants.GenerationConstants
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -32,6 +33,9 @@ class PokemonRepositoryImpl @Inject constructor(
 
     override suspend fun getId(idPokemon: Int, idGeneracion: Int, nombrePokemon: String, nombreGeneracion: String): PokemonGeneracionResult? {
         return try {
+            if (idPokemon <= 0) {
+                return fetchAndSave(nombrePokemon, nombreGeneracion)
+            }
             val local = pokemonDao.getId(idPokemon, idGeneracion)
             if (local == null) {
                 fetchAndSave(idPokemon, idGeneracion, nombrePokemon, nombreGeneracion)
@@ -57,6 +61,27 @@ class PokemonRepositoryImpl @Inject constructor(
             val entity = PokemonEntity(
                 idPokemon = idPokemon,
                 idGeneracion = idGeneracion,
+                nombrePokemon = nombrePokemon,
+                nombreGeneracion = nombreGeneracion,
+                fecha = System.currentTimeMillis(),
+                data = jsonStr
+            )
+            pokemonDao.insert(entity)
+            return remoteData
+        } else {
+            Log.d("DEBUG", "Fallo al consumir remotamente Pokemon: $nombrePokemon")
+        }
+        return null
+    }
+
+    private suspend fun fetchAndSave(nombrePokemon: String, nombreGeneracion: String): PokemonGeneracionResult? {
+        val remoteData = remoteDataSource.verPokemonGeneracion(nombrePokemon, nombreGeneracion)
+        if (remoteData != null) {
+            val jsonStr = gson.toJson(remoteData)
+            val idGenReal = GenerationConstants.getId(nombreGeneracion) ?: 1
+            val entity = PokemonEntity(
+                idPokemon = remoteData.id,
+                idGeneracion = idGenReal,
                 nombrePokemon = nombrePokemon,
                 nombreGeneracion = nombreGeneracion,
                 fecha = System.currentTimeMillis(),

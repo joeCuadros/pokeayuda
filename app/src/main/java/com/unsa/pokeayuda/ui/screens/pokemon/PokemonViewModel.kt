@@ -37,7 +37,7 @@ class PokemonViewModel @Inject constructor(
             is PokemonEvent.CambiarBusqueda -> filtrarPokemonDisponibles(event.query)
             is PokemonEvent.AgregarAlEquipo -> agregarAlEquipo(event.idPokemon)
             is PokemonEvent.EliminarDelEquipo -> eliminarDelEquipo(event.id)
-            is PokemonEvent.RequerirDetallePokemon -> cargarDetalleEnSegundoPlano(event.idPokemon, event.nombrePokemon)
+            is PokemonEvent.RequerirDetallePokemon -> cargarDetalleEnSegundoPlano(event.idPokemon)
         }
     }
 
@@ -74,10 +74,7 @@ class PokemonViewModel @Inject constructor(
                         )
                     }
                     equipo.forEach { pokemon ->
-                        val nombreFaltante = disponibles.getOrNull(pokemon.idPokemon - 1) ?: ""
-                        if (nombreFaltante.isNotBlank()) {
-                            cargarDetalleEnSegundoPlano(pokemon.idPokemon, nombreFaltante)
-                        }
+                        cargarDetalleEnSegundoPlano(pokemon.idPokemon)
                     }
 
                 } catch (e: Exception) {
@@ -100,23 +97,42 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
-    private fun agregarAlEquipo(idPokemon: Int) {
+    private fun agregarAlEquipo(idPokemon: String) { // Recibe el String (nombre del Pokémon)
+        if (idPokemon.isBlank()) return
         viewModelScope.launch(Dispatchers.IO) {
             val currentState = _state.value
-            val existe = equipoPokemonRepository.getId(idPokemon)
-            if (existe == null) {
-                val nuevaEntidad = EquipoPokemonEntity(
-                    idPokemon = idPokemon,
-                    idGeneracion = currentState.idGeneracionActual
+            val idGen = currentState.idGeneracionActual
+            val nombreGen = currentState.nombreGeneracionActual
+            try {
+                val pokemonRemoto = pokemonRepository.getId(
+                    idPokemon = 0,
+                    idGeneracion = idGen,
+                    nombrePokemon = idPokemon.lowercase(),
+                    nombreGeneracion = nombreGen
                 )
-                equipoPokemonRepository.insert(nuevaEntidad)
-
-                val nuevoEquipo = equipoPokemonRepository.getByGeneracion(_state.value.idGeneracionActual)
-                _state.update { it.copy(equipoActual = nuevoEquipo) }
-                val nombrePokemon = currentState.nombresPokemonDisponibles.getOrNull(idPokemon - 1) ?: ""
-                if (nombrePokemon.isNotBlank()) {
-                    cargarDetalleEnSegundoPlano(idPokemon, nombrePokemon)
+                if (pokemonRemoto != null) {
+                    val idRealPokemon = pokemonRemoto.id
+                    val existe = equipoPokemonRepository.getId(idRealPokemon)
+                    if (existe == null) {
+                        val nuevaEntidad = EquipoPokemonEntity(
+                            idPokemon = idRealPokemon,
+                            idGeneracion = idGen
+                        )
+                        equipoPokemonRepository.insert(nuevaEntidad)
+                        val nuevoEquipo = equipoPokemonRepository.getByGeneracion(idGen)
+                        _state.update { currentStateActual ->
+                            val mapaActualizado = currentStateActual.detallesPokemonCargados.toMutableMap().apply {
+                                put(idRealPokemon, pokemonRemoto)
+                            }
+                            currentStateActual.copy(
+                                equipoActual = nuevoEquipo,
+                                detallesPokemonCargados = mapaActualizado
+                            )
+                        }
+                    }
                 }
+            } catch (e: Exception) {
+                _state.update { it.copy(error = "Error al agregar Pokémon: ${e.localizedMessage}") }
             }
         }
     }
@@ -135,7 +151,7 @@ class PokemonViewModel @Inject constructor(
         }
     }
 
-    private fun cargarDetalleEnSegundoPlano(idPokemon: Int, nombrePokemon: String) {
+    private fun cargarDetalleEnSegundoPlano(idPokemon: Int) {
         if (_state.value.detallesPokemonCargados.containsKey(idPokemon)) return
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -144,7 +160,7 @@ class PokemonViewModel @Inject constructor(
             val resultado = pokemonRepository.getId(
                 idPokemon = idPokemon,
                 idGeneracion = idGen,
-                nombrePokemon = nombrePokemon,
+                nombrePokemon = "",
                 nombreGeneracion = nombreGen
             )
 

@@ -154,6 +154,7 @@ fun DetailScreen (
                         }
                         // Tabla vacía por ahora
                     }
+                    Spacer(modifier = Modifier.height(15.dp))
                 }
                 // ---------- Seccion 3 ----------
                 item {
@@ -168,6 +169,7 @@ fun DetailScreen (
                         }
                         // Detalle vacío por ahora
                     }
+                    Spacer(modifier = Modifier.height(15.dp))
                 }
 
                 // ---------- Seccion 4 ----------
@@ -183,6 +185,7 @@ fun DetailScreen (
                         }
                         // Detalle vacío por ahora
                     }
+                    Spacer(modifier = Modifier.height(15.dp))
                 }
 
                 // ---------- Seccion 5 ----------
@@ -198,6 +201,7 @@ fun DetailScreen (
                         }
                         // Detalle vacío por ahora
                     }
+                    Spacer(modifier = Modifier.height(15.dp))
                 }
             }
         }
