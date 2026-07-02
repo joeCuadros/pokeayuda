@@ -8,6 +8,7 @@ import com.unsa.pokeayuda.data.local.entity.HabilidadEntity
 import com.unsa.pokeayuda.data.remote.PokemonRemoteDataSource
 import com.unsa.pokeayuda.data.remote.model.ability.AbilityGeneracionResult
 import com.unsa.pokeayuda.domain.repository.HabilidadRepository
+import com.unsa.pokeayuda.utils.constants.GenerationConstants
 import kotlinx.coroutines.flow.firstOrNull
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -32,6 +33,9 @@ class HabilidadRepositoryImpl @Inject constructor(
 
     override suspend fun getId(idHabilidad: Int, idGeneracion: Int, nombreHabilidad: String, nombreGeneracion: String): AbilityGeneracionResult? {
         return try {
+            if (idHabilidad <= 0) {
+                return fetchAndSave(nombreHabilidad, nombreGeneracion)
+            }
             val local = habilidadDao.getId(idHabilidad, idGeneracion)
             if (local == null) {
                 fetchAndSave(idHabilidad, idGeneracion, nombreHabilidad, nombreGeneracion)
@@ -57,6 +61,27 @@ class HabilidadRepositoryImpl @Inject constructor(
             val entity = HabilidadEntity(
                 idHabilidad = idHabilidad,
                 idGeneracion = idGeneracion,
+                nombrePokemon = nombreHabilidad,
+                nombreGeneracion = nombreGeneracion,
+                fecha = System.currentTimeMillis(),
+                data = jsonStr
+            )
+            habilidadDao.insert(entity)
+            return remoteData
+        } else {
+            Log.d("DEBUG", "Fallo al consumir remotamente Habilidad: $nombreHabilidad")
+        }
+        return null
+    }
+
+    private suspend fun fetchAndSave(nombreHabilidad: String, nombreGeneracion: String): AbilityGeneracionResult? {
+        val remoteData = remoteDataSource.obtenerInfoHabilidad(nombreHabilidad, nombreGeneracion)
+        if (remoteData != null) {
+            val jsonStr = gson.toJson(remoteData)
+            val idGenReal = GenerationConstants.getId(nombreGeneracion) ?: 1
+            val entity = HabilidadEntity(
+                idHabilidad = remoteData.id,
+                idGeneracion = idGenReal,
                 nombrePokemon = nombreHabilidad,
                 nombreGeneracion = nombreGeneracion,
                 fecha = System.currentTimeMillis(),

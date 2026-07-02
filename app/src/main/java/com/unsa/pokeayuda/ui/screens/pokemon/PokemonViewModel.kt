@@ -113,7 +113,7 @@ class PokemonViewModel @Inject constructor(
                 )
                 if (pokemonRemoto != null) {
                     val idRealPokemon = pokemonRemoto.id
-                    val existe = equipoPokemonRepository.getId(idRealPokemon)
+                    val existe = equipoPokemonRepository.getId(idRealPokemon, idGen)
                     if (existe == null) {
                         val nuevaEntidad = EquipoPokemonEntity(
                             idPokemon = idRealPokemon,

@@ -19,6 +19,15 @@ interface EquipoPokemonDao {
     @Query("SELECT * FROM equipo_pokemon WHERE id = :id")
     suspend fun getId(id: Int): EquipoPokemonEntity?
 
+    @Query("""
+    SELECT * 
+    FROM equipo_pokemon
+    WHERE idPokemon = :idPokemon
+      AND idGeneracion = :idGeneracion
+    LIMIT 1
+""")
+    suspend fun getId(idPokemon: Int, idGeneracion: Int): EquipoPokemonEntity?
+
     @Update
     suspend fun update(entity: EquipoPokemonEntity)
 

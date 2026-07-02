@@ -125,7 +125,7 @@ class DetailViewModel @Inject constructor(
                 val ataquesList = mutableListOf<MoveGeneracionResult>()
                 state.pokemonDetalle?.moves?.keys?.forEach { nombreAtaque ->
                     ataqueRepository.getId(
-                        idAtaque = state.pokemonId,  // OJO
+                        idAtaque = 0,  // OJO
                         idGeneracion = idGen,
                         nombreAtaque = nombreAtaque,
                         nombreGeneracion = genNombre
@@ -168,7 +168,7 @@ class DetailViewModel @Inject constructor(
                 val habilidadesList = mutableListOf<AbilityGeneracionResult>()
                 state.pokemonDetalle?.abilities?.forEach { slotDto ->
                     habilidadRepository.getId(
-                        idHabilidad = state.pokemonId,  // OJO
+                        idHabilidad = 0,  // OJO
                         idGeneracion = idGen,
                         nombreHabilidad = slotDto.ability?.name ?: "",
                         nombreGeneracion = genNombre
@@ -193,7 +193,7 @@ class DetailViewModel @Inject constructor(
             try {
                 val genNombre = state.nombreGeneracionActual
                 val idGen = GenerationConstants.getId(genNombre) ?: 0
-                val detalle = habilidadRepository.getId(state.pokemonId, idGen, nombreHabilidad, genNombre) // OJO
+                val detalle = habilidadRepository.getId(0, idGen, nombreHabilidad, genNombre)
                 state = state.copy(habilidadSeleccionadaDetalle = detalle)
             } catch (_: Exception) {}
         }

@@ -39,6 +39,18 @@ class EquipoPokemonRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getId(idPokemon: Int, idGeneracion: Int): EquipoPokemonEntity? {
+        return try {
+            equipoPokemonDao.getId(idPokemon, idGeneracion)
+        } catch (e: Exception) {
+            Log.d(
+                "DEBUG",
+                "Fallo al obtener miembro del equipo por Pokémon y generación: ${e.message}"
+            )
+            null
+        }
+    }
+
     override suspend fun insert(entity: EquipoPokemonEntity) {
         try {
             equipoPokemonDao.insert(entity)

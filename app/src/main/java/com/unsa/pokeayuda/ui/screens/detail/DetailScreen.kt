@@ -39,6 +39,8 @@ import coil3.compose.AsyncImage
 import com.unsa.pokeayuda.ui.components.AppSection
 import com.unsa.pokeayuda.ui.components.PokemonStatItem
 import com.unsa.pokeayuda.ui.components.PokemonTypeChip
+import com.unsa.pokeayuda.ui.screens.detail.components.CadenaEvolutivaComponent
+import com.unsa.pokeayuda.ui.screens.detail.components.HabilidadesComponent
 import com.unsa.pokeayuda.ui.screens.detail.components.MatrizTiposComponent
 import com.unsa.pokeayuda.utils.translations.StatTranslations
 
@@ -153,7 +155,9 @@ fun DetailScreen (
                         if (state.isLoadingAtaques) {
                             CircularProgressIndicator()
                         }
-                        // Tabla vacía por ahora
+                        if (state.habilidadesVisibles.isNotEmpty()) {
+                            HabilidadesComponent(habilidadesVisibles = state.habilidadesVisibles)
+                        }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                 }
@@ -184,7 +188,9 @@ fun DetailScreen (
                         if (state.isLoadingEvoluciones) {
                             CircularProgressIndicator()
                         }
-                        // Detalle vacío por ahora
+                        state.evolucionDetalle?.let { detalleCadena ->
+                            CadenaEvolutivaComponent(evolucionDetalle = detalleCadena)
+                        }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                 }
