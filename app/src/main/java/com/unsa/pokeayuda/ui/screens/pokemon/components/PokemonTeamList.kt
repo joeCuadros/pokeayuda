@@ -3,6 +3,8 @@ package com.unsa.pokeayuda.ui.screens.pokemon.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -36,18 +38,30 @@ fun PokemonTeamList(
             )
         }
     } else {
+        val filas = equipo.chunked(2)
         Column(
             modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            equipo.forEach { entidad ->
-                val detalle = detallesCargados[entidad.idPokemon]
-                PokemonTeamCard(
-                    entidad = entidad,
-                    detalle = detalle,
-                    onEliminar = { onEliminarPokemon(entidad.id) },
-                    onCardClick = onPokemonClick
-                )
+            filas.forEach { fila ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    fila.forEach { entidad ->
+                        val detalle = detallesCargados[entidad.idPokemon]
+                        PokemonTeamCard(
+                            entidad = entidad,
+                            detalle = detalle,
+                            onEliminar = { onEliminarPokemon(entidad.id) },
+                            onCardClick = onPokemonClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    if (fila.size == 1) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
             }
         }
     }

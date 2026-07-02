@@ -71,4 +71,7 @@ dependencies {
     // gson uso de json
     implementation(libs.converter.gson)
     implementation(libs.gson)
+    // coil compose
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
 }

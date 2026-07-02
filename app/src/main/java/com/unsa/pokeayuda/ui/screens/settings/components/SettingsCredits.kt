@@ -44,7 +44,7 @@ fun SettingsCredits() {
             CreditRow(
                 icon = Icons.Default.Code,
                 label = "Versión",
-                value = "01.00 · 2026"
+                value = "01.00 - 2026"
             )
         }
     }

@@ -10,13 +10,14 @@ kotlin = "2.4.0"
 composeBom = "2025.10.01" # compatabilida SDK-36
 navigationCompose = "2.9.8" # version navegacion
 hilt = "2.60" # version hilt (inyeccion de depencia)
-hiltNavigationCompose = "1.2.0" # hilt
+hiltNavigationCompose = "1.2.0" # hilt compatabilida SDK-36
 ksp = "2.3.9" # version ksp
 room = "2.8.4" # version room
 datastore = "1.2.1" # version datastore
 retrofit = "3.0.0" # version retrofit
 gson = "2.14.0" # version gson
 converterGson = "3.0.0" # version converterGson
+coil = "3.5.0" # version coil
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,9 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 # usar json
 converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGson" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+# coil
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -32,7 +32,6 @@ fun PokemonScreen(
     viewModel: PokemonViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -51,9 +50,8 @@ fun PokemonScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(28.dp)
+                .padding(top = padding.calculateTopPadding()),
+            contentPadding = PaddingValues(16.dp)
         ) {
             item {
                 AppSection(title = "Agregar al Equipo", icon = Icons.Default.Add) {
@@ -78,7 +76,7 @@ fun PokemonScreen(
                     PokemonTeamList(
                         equipo = state.equipoActual,
                         detallesCargados = state.detallesPokemonCargados,
-                            onEliminarPokemon = { idFilaRoom ->
+                        onEliminarPokemon = { idFilaRoom ->
                             viewModel.onEvent(PokemonEvent.EliminarDelEquipo(idFilaRoom))
                         },
                         onPokemonClick = onNavigateToDetail
