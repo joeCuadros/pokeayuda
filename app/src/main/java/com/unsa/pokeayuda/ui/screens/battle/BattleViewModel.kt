@@ -8,7 +8,6 @@ import com.unsa.pokeayuda.domain.repository.AppPreferencesRepository
 import com.unsa.pokeayuda.domain.repository.EquipoPokemonRepository
 import com.unsa.pokeayuda.domain.repository.GeneracionRepository
 import com.unsa.pokeayuda.domain.repository.PokemonRepository
-import com.unsa.pokeayuda.domain.repository.TipoRepository
 import com.unsa.pokeayuda.utils.constants.GenerationConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +24,7 @@ class BattleViewModel @Inject constructor(
     private val appPreferencesRepository: AppPreferencesRepository,
     private val generacionRepository: GeneracionRepository,
     private val equipoPokemonRepository: EquipoPokemonRepository,
-    private val pokemonRepository: PokemonRepository,
-    private val tipoRepository: TipoRepository
+    private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BattleState())
@@ -100,9 +98,7 @@ class BattleViewModel @Inject constructor(
                     nombreGeneracion = currentState.nombreGeneracionActual
                 )
                 _state.update { it.copy(rivalPokemon = rivalData, isLoadingRival = false)}
-
                 actualizarTablaStats()
-                calcularMatricesEfectividad()
             } catch (e: Exception) {
                 _state.update { it.copy(isLoadingRival = false, error = e.localizedMessage)}
             }
@@ -112,17 +108,13 @@ class BattleViewModel @Inject constructor(
     private fun actualizarTablaStats() {
         val rows = mutableListOf<PokemonStatRow>()
         val currentState = _state.value
-
         currentState.equipoPokemon.forEach { p ->
             rows.add(mapearAStatRow(p, esRival = false))
         }
-
         currentState.rivalPokemon?.let { r ->
             rows.add(mapearAStatRow(r, esRival = true))
         }
-
         _state.update { it.copy(tablaStats = rows)}
-
         _state.value.statOrdenadoPor?.let { ordenarEstadisticas(it, mantenerDireccion = true) }
     }
 
@@ -158,63 +150,6 @@ class BattleViewModel @Inject constructor(
         )}
     }
 
-    private fun calcularMatricesEfectividad() {
-        val currentState = _state.value
-        val rival = currentState.rivalPokemon ?: return
-        if (currentState.equipoPokemon.isEmpty()) return
-
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val idGen = currentState.idGeneracionActual
-                val genNombre = currentState.nombreGeneracionActual
-
-                val listaTiposRivales = rival.types.mapNotNull {
-                    tipoRepository.getId(0, idGen, it.type.name, genNombre)
-                }
-                val rivalTiposString = rival.types.joinToString(" / ") { it.type.name }
-
-                val listaMatchups = currentState.equipoPokemon.map { aliado ->
-                    val listaTiposAliados = aliado.types.mapNotNull {
-                        tipoRepository.getId(0, idGen, it.type.name, genNombre)
-                    }
-                    val aliadoTiposString = aliado.types.joinToString(" / ") { it.type.name }
-
-                    val rowsOfensiva = listaTiposAliados.map { tipoAliado ->
-                        var mult = 1.0f
-                        rival.types.forEach { slotRival ->
-                            mult *= obtenerMultiplicador(tipoAliado, slotRival.type.name)
-                        }
-                        EfectividadRow(
-                            tipoAtacante = tipoAliado.name,
-                            tipoDefensorCombinado = rivalTiposString,
-                            multiplicador = mult
-                        )
-                    }
-
-                    val rowsDefensiva = listaTiposRivales.map { tipoRival ->
-                        var mult = 1.0f
-                        aliado.types.forEach { slotAliado ->
-                            mult *= obtenerMultiplicador(tipoRival, slotAliado.type.name)
-                        }
-                        EfectividadRow(
-                            tipoAtacante = tipoRival.name,
-                            tipoDefensorCombinado = aliadoTiposString,
-                            multiplicador = mult
-                        )
-                    }
-
-                    PokemonEfectividadMatchup(
-                        idPokemon = aliado.id,
-                        nombrePokemon = aliado.name,
-                        tablaOfensiva = rowsOfensiva,
-                        tablaDefensiva = rowsDefensiva
-                    )
-                }
-
-                _state.update { it.copy(matrizEfectividadEquipo = listaMatchups)}
-            } catch (_: Exception) {}
-        }
-    }
 
     private fun obtenerMultiplicador(tipoAtaque: TypeGeneracionResult, tipoDefensa: String): Float {
         val rel = tipoAtaque.damageRelations

@@ -16,7 +16,6 @@ data class BattleState(
     val statOrdenadoPor: String? = null,
     val statOrdenAscendente: Boolean = false,
     val tablaStats: List<PokemonStatRow> = emptyList(),
-    val matrizEfectividadEquipo: List<PokemonEfectividadMatchup> = emptyList()
 )
 
 data class PokemonStatRow(

@@ -8,5 +8,4 @@ sealed interface DetailEvent {
     data class VerDetalleAtaque(val nombreAtaque: String) : DetailEvent
     object ActivarHabilidades : DetailEvent
     data class VerDetalleHabilidad(val nombreHabilidad: String) : DetailEvent
-    object ActivarMatrizTipos : DetailEvent
 }

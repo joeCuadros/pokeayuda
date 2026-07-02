@@ -43,8 +43,9 @@ import com.unsa.pokeayuda.ui.components.PokemonStatItem
 import com.unsa.pokeayuda.ui.components.PokemonTypeChip
 import com.unsa.pokeayuda.ui.screens.detail.components.CadenaEvolutivaComponent
 import com.unsa.pokeayuda.ui.screens.detail.components.HabilidadesComponent
-import com.unsa.pokeayuda.ui.screens.detail.components.MatrizTiposComponent
+import com.unsa.pokeayuda.ui.screens.detail.components.TablaEfectividadesComponent
 import com.unsa.pokeayuda.ui.screens.detail.components.TablaMovimientosYProgresoComponent
+import com.unsa.pokeayuda.utils.PokemonTypeVS
 import com.unsa.pokeayuda.utils.translations.StatTranslations
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -118,7 +119,7 @@ fun DetailScreen (
                             ) {
                                 // Nombre y Generación
                                 Text(
-                                    text = "${nombrePokemon.replaceFirstChar { it.uppercase() }} — ${state.nombreGeneracionActual.uppercase()}",
+                                    text = "${nombrePokemon.replaceFirstChar { it.uppercase() }} — ${state.nombreGeneracionActual}",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -235,17 +236,18 @@ fun DetailScreen (
                 // ---------- Seccion 5 ----------
                 item {
                     AppSection(title = "Debilidades y fortalezas", icon = Icons.Default.Shield) {
-                        if (state.tiposVisibles.isEmpty() && !state.isLoadingTipos) {
-                            Button(onClick = { viewModel.onEvent(DetailEvent.ActivarMatrizTipos) }) {
-                                Text("Ver Debilidades y fortalezas")
-                            }
-                        }
-                        if (state.isLoadingTipos) {
-                            CircularProgressIndicator()
-                        }
-                        if (state.tiposVisibles.isNotEmpty()) {
-                            MatrizTiposComponent(tiposVisibles = state.tiposVisibles)
-                        }
+                        val listaTiposDefensores = pokemon.types
+                            .sortedBy { it.slot }
+                            .map { it.type.name }
+
+                        val matrizEfectividades = PokemonTypeVS.calcularDebilidades(state.nombreGeneracionActual, listaTiposDefensores)
+
+                        TablaEfectividadesComponent(
+                            efectividades = matrizEfectividades,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.height(15.dp))
                 }

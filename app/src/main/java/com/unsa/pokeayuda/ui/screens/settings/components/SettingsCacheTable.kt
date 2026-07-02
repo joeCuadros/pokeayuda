@@ -68,12 +68,12 @@ fun SettingsCacheTable(
                 onDelete = onDeleteAbility,
                 icon = Icons.Default.Star
             )
-            SettingsCacheRow(
+            /*SettingsCacheRow(
                 name = "Tipos",
                 size = state.typeCacheSize,
                 onDelete = onDeleteType,
                 icon = Icons.Default.Category
-            )
+            )*/
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 8.dp),

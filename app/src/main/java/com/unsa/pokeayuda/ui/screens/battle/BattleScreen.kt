@@ -176,7 +176,7 @@ fun BattleScreen(
             }
             item {
                 AppSection(title = "Tabla de debilidades", icon = Icons.Default.Info) {
-                    // Próxima sección a implementar
+
                 }
             }
         }

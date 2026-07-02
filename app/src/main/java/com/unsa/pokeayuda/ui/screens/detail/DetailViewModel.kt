@@ -7,13 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unsa.pokeayuda.data.remote.model.ability.AbilityGeneracionResult
 import com.unsa.pokeayuda.data.remote.model.move.MoveGeneracionResult
-import com.unsa.pokeayuda.data.remote.model.type.TypeGeneracionResult
 import com.unsa.pokeayuda.domain.repository.AppPreferencesRepository
 import com.unsa.pokeayuda.domain.repository.AtaqueRepository
 import com.unsa.pokeayuda.domain.repository.CadenaEvolutivaRepository
 import com.unsa.pokeayuda.domain.repository.HabilidadRepository
 import com.unsa.pokeayuda.domain.repository.PokemonRepository
-import com.unsa.pokeayuda.domain.repository.TipoRepository
 import com.unsa.pokeayuda.utils.constants.GenerationConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,8 +25,7 @@ class DetailViewModel @Inject constructor(
     private val pokemonRepository: PokemonRepository,
     private val cadenaEvolutivaRepository: CadenaEvolutivaRepository,
     private val ataqueRepository: AtaqueRepository,
-    private val habilidadRepository: HabilidadRepository,
-    private val tipoRepository: TipoRepository
+    private val habilidadRepository: HabilidadRepository
 ) : ViewModel() {
 
     var state by mutableStateOf(DetailState())
@@ -57,9 +54,6 @@ class DetailViewModel @Inject constructor(
             }
             is DetailEvent.VerDetalleHabilidad -> {
                 cargarDetalleEspecificoHabilidad(event.nombreHabilidad)
-            }
-            DetailEvent.ActivarMatrizTipos -> {
-                cargarMatrizTipos()
             }
         }
     }
@@ -222,38 +216,6 @@ class DetailViewModel @Inject constructor(
                 val detalle = habilidadRepository.getId(0, idGen, nombreHabilidad, genNombre)
                 state = state.copy(habilidadSeleccionadaDetalle = detalle)
             } catch (_: Exception) {}
-        }
-    }
-
-    private fun cargarMatrizTipos() {
-        if (state.tiposVisibles.isNotEmpty() || state.isLoadingTipos) return
-
-        viewModelScope.launch(Dispatchers.IO) {
-            state = state.copy(isLoadingTipos = true, errorTipos = null)
-            try {
-                val genNombre = state.nombreGeneracionActual
-                val idGen = GenerationConstants.getId(genNombre) ?: 0
-
-                val tiposList = mutableListOf<TypeGeneracionResult>()
-                state.pokemonDetalle?.types?.forEach { typeSlot ->
-                    tipoRepository.getId(
-                        idTipo = 0,
-                        idGeneracion = idGen,
-                        nombreTipo = typeSlot.type.name,
-                        nombreGeneracion = genNombre
-                    )?.let { tiposList.add(it) }
-                }
-
-                state = state.copy(
-                    tiposVisibles = tiposList,
-                    isLoadingTipos = false
-                )
-            } catch (e: Exception) {
-                state = state.copy(
-                    isLoadingTipos = false,
-                    errorTipos = e.localizedMessage ?: "Error al cargar tipos"
-                )
-            }
         }
     }
 }

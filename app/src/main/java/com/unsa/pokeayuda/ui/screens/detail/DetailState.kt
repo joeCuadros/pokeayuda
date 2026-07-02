@@ -27,8 +27,4 @@ data class DetailState(
     val habilidadesVisibles: List<AbilityGeneracionResult> = emptyList(),
     val habilidadSeleccionadaDetalle: AbilityGeneracionResult? = null,
     val errorHabilidades: String? = null,
-
-    val isLoadingTipos: Boolean = false,
-    val tiposVisibles: List<TypeGeneracionResult> = emptyList(),
-    val errorTipos: String? = null
 )
